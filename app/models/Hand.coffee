@@ -3,16 +3,17 @@ class window.Hand extends Backbone.Collection
   model: Card
 
   initialize: (array, @deck, @isDealer) ->
-    @width = 285
+    @width = 268
 
   hit: ->
-    @width += 143
+    @width += 142
     if not @isDealer
       $ =>
         $('.playerHand').css({ 'width' : @width})
     else
       $ =>
-        $('.dealerHand').css({ width : @width})
+        console.log 'dealer hits'
+        $('.dealerHand').css({ 'width' : @width})
 
     @add(@deck.pop())
 

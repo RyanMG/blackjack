@@ -29,12 +29,6 @@ class window.App extends Backbone.Model
     @set 'playerHand', deck.dealPlayer()
     @set 'dealerHand', deck.dealDealer()
 
-    # not firing to view, as view is not available yet
-    if @get('playerHand').getScore() is 21
-      @set 'message', 'player blackjack'
-      @set 'winner', 'player'
-      @endGame()
-
     @get('playerHand').on 'bust', =>
       @set 'message', 'player busts'
       @get('dealerHand').revealHand()
@@ -53,5 +47,31 @@ class window.App extends Backbone.Model
     console.log 'unset', @get 'winner'
     @trigger 'redraw'
 
+    #@checkForBlackJack()
+    @get('player').bet() if @get 'player'
+
   createPlayer: (name) ->
     @set 'player', new Player({name: name})
+
+  checkForBlackJack: ->
+    if @get('playerHand').getScore() is 21
+      @set 'message', 'player blackjack'
+      @set 'winner', 'player'
+
+  payout: (winner) ->
+    if winner is 'player' and @get('message') isnt 'player blackjack'
+      $ ->
+        $('.payout').html('<p>You win $20!</p>')
+      @get('player').wins(20)
+    else if winner is 'player' and @get('message') is 'player blackjack'
+      $ ->
+        $('.payout').html('<p>You win $40!</p>')
+      @get('player').wins(40)
+    else if winner is 'tie'
+      $ ->
+        $('.payout').html('<p>You win your bet back!</p>')
+      @get('player').wins(10)
+    else
+      $ ->
+        $('.payout').html('<p>Try again.</p>')
+    

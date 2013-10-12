@@ -1,13 +1,16 @@
 class window.Player extends Backbone.Model
   initialize: (params) ->
-    @set 'name', params.name
+    if params.name isnt ""
+      @set 'name', params.name
+    else
+      @set 'name', 'The Man With No Name'
     @set 'cash', 200
 
   bet: (amount) ->
-    amount is amount or 10
-    cash is @get 'cash'
+    amount = amount or 10
+    cash = @get 'cash'
     @set 'cash', cash - amount
 
   wins: (amount) ->
-    cash is @get 'cash'
+    cash = @get 'cash'
     @set 'cash', cash + amount

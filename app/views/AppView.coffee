@@ -1,27 +1,33 @@
 class window.AppView extends Backbone.View
-  className: 'table'
+  className: 'tableView'
   template: _.template '
-    <div class="dealer-hand-container"></div>
-    <div class="player-hand-container"></div>
+    <div class="table">
+      <div class="dealer-hand-container"></div>
+      <div class="player-hand-container"></div>
 
-    <div class="button-holder">
-      <div class="button-box">
-        <button class="hit-button">Hit</button>
+      <div class="button-holder">
+        <div class="button-box">
+          <button class="hit-button">Hit</button>
+        </div>
+        <div class="button-box">
+          <button class="stand-button">Stand</button>
+        </div>
+        <div class="newGameOptions">
+          <button id="startNewGame" style="display:none">Start New Game?</button>
+        </div>
       </div>
-      <div class="button-box">
-        <button class="stand-button">Stand</button>
-      </div>
-      <div class="newGameOptions">
-        <button id="startNewGame" style="display:none">Start New Game?</button>
-      </div>
+    </div>
+
+    <div class="playerDeets">
     </div>
 
     <div class="messagesContainer">
       <div class="messageBox"></div>
       <div class="winnerBox"></div>
+      <div class="payout"></div>
     </div>
     <div class="mask"></div>
-    <div class="playerContainer"></div>
+
     '
 
   events:
@@ -33,18 +39,21 @@ class window.AppView extends Backbone.View
   initialize: ->
     @askName()
     @render()
-    this.model.on 'change:winner', =>
+    @model.on 'change:winner', =>
       console.log 'appview: winner', this.model.get 'winner'
       @removeButtons()
       @showWinner()
-    this.model.on 'redraw', => @render()
+    @model.on 'redraw', =>
+      @render()
+      @model.checkForBlackJack()
+    @model.checkForBlackJack()
 
   render: ->
     @$el.children().detach()
     @$el.html @template()
     @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
-    @$('.playerContainer').html new PlayerView(model: @model.get 'player').el
+    @$('.playerDeets').html new PlayerView(model: @model.get 'player').el
 
   removeButtons: ->
     $ ->
@@ -64,6 +73,8 @@ class window.AppView extends Backbone.View
         $('.messageBox').html(message)
     $ ->
       $('.winnerBox').html(winner + ' wins')
+    console.log('test')
+    @model.payout(winner)
 
   askName: ->
     this.model.createPlayer prompt "What's your name?"
