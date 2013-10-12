@@ -49,6 +49,14 @@ body:before {
   border-radius: 30px;
 }
 
+.playerDeets p {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color:#ddd;
+  letter-spacing: 1px;
+}
+
 .dealer-hand-container {
   margin-top: 35px;
 }
